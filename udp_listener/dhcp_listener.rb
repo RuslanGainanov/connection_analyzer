@@ -8,6 +8,7 @@ require 'pp'
 INFLUX_HOST = "localhost"
 DHCP_LISTEN_PORT = 5242
 DHCP_LISTEN_ADDR = "0.0.0.0"
+TIME_ZONE = 5
 
 @influxdb = InfluxDB::Client.new host: INFLUX_HOST, 
   database: "telegraf", 
@@ -29,8 +30,8 @@ def fix_data( h )
   end
   
   dt = DateTime.strptime(h.delete("date")+' '+h.delete("time"), '%m/%d/%y %H:%M:%S')
-  # puts (dt.to_time-60*60*2).utc
-  h.store("timestamp", (dt.to_time-60*60*2).to_i)
+  # puts (dt.to_time-60*60*(TIME_ZONE)).utc
+  h.store("timestamp", (dt.to_time-60*60*(TIME_ZONE)).to_i)
 end
 
 def save_data( h )
@@ -43,14 +44,14 @@ def save_data( h )
             ip_address: h["ip_address"],  
             hostname: h["hostname"],  
             mac_address: h["mac_address"] },
-    values: { f: 0 },
+    values: { z: 0 },
     timestamp: ts
   }
   # puts JSON.pretty_generate(h)
   data << {
     series: "dhcp_all",
     tags: h,
-    values: { f: 0 },
+    values: { z: 0 },
     timestamp: ts
   }
   @influxdb.write_points(data)
