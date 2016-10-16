@@ -32,7 +32,7 @@ def fix_data( h )
     end
   end
   # "Timestamp":"09/26/2016 06:15:06.321"
-  dt = DateTime.strptime(h.delete("Timestamp"), '%m/%d/%y %H:%M:%S.%L')
+  dt = DateTime.strptime(h.delete("Timestamp"), '%m/%d/%Y %H:%M:%S.%L')
   # puts (dt.to_time-60*60*(TIME_ZONE)).utc
   h.store("timestamp", (dt.to_time-60*60*(TIME_ZONE)).to_i)
 end
