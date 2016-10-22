@@ -79,4 +79,5 @@ loop do
   data = JSON.parse(text)
   fix_data(data)
   save_data(data)
+  push_data()
 end
