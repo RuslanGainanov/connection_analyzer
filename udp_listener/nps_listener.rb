@@ -60,7 +60,7 @@ def save_data( h )
 end
 
 server = UDPSocket.new
-server.bind(NPS_LISTEN_ADDR, NPS_LISTEN_PORT)
+server.bind(LISTEN_ADDR, LISTEN_PORT)
 puts "start"
 loop do
   text, sender = server.recvfrom(65536)  
