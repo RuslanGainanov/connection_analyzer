@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Events	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^class Events$/;"	class	line:8
+fix_data	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def fix_data( h )$/;"	method	line:32
+find_nps_request	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def find_nps_request(value)$/;"	method	line:52
+find_nps_accept	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def find_nps_accept(class_value, req_time)$/;"	method	line:63
+push_data	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def push_data()$/;"	method	line:78
+close_user_session	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def close_user_session(user_name, time_new_start)$/;"	method	line:88
+store_point	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def store_point(event, point, field=0)$/;"	method	line:123
+dhcp_f_renew	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def dhcp_f_renew(dhcp_point)$/;"	method	line:141
+read_dhcp	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def read_dhcp(min_time, max_time)$/;"	method	line:180
+read_nps	E:\!Code\Ruby\udp_listener\analyzer\connections_users.rb	/^def read_nps(min_time, max_time)$/;"	method	line:207
