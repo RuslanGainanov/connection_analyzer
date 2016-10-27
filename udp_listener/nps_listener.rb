@@ -13,10 +13,14 @@ COUNT_STORED_ELEMENTS = 100
 TIME_RANGE=3*60 #pushed the time range, in seconds
 
 @stored_data=[]
-@influxdb = InfluxDB::Client.new host: INFLUX_HOST, 
-  database: "telegraf", 
+@influxdb = InfluxDB::Client.new host: INFLUX_HOST,
+  database: "telegraf",
   time_precision: 's'
 @last_pushed_time=0
+
+def fix_mac(s)
+  s.upcase!
+end
 
 def fix_data( h )
   h.delete("@version")
@@ -29,8 +33,11 @@ def fix_data( h )
   h.delete("tags")
   h.delete("host")
   h.delete("port")
-  
-  h.each do |k,v| 
+
+  fix_mac(h["Calling-Station-Id"])
+  fix_mac(h["Called-Station-Id"])
+
+  h.each do |k,v|
     if(v.is_a? Numeric)
       h[k]=v.to_s
     end
@@ -63,8 +70,8 @@ server = UDPSocket.new
 server.bind(LISTEN_ADDR, LISTEN_PORT)
 puts "start"
 loop do
-  text, sender = server.recvfrom(65536)  
-  # text, sender = server.recvfrom_nonblock(65536)  
+  text, sender = server.recvfrom(65536)
+  # text, sender = server.recvfrom_nonblock(65536)
     #=> ["aaa", ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
   # puts "#{text}:\n  #{sender}"
   # puts JSON.parse(text)
