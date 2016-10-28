@@ -55,9 +55,11 @@ end
 
 def push_data()
   if(@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE))
-    @influxdb.write_points(@stored_data)
-    @stored_data.clear
-    @last_pushed_time=Time.now.to_i
+    if(!@stored_data.empty?)
+      @influxdb.write_points(@stored_data)
+      @stored_data.clear
+      @last_pushed_time=Time.now.to_i
+    end
   end
 end
 
