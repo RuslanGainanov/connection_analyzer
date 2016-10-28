@@ -285,7 +285,7 @@ end
 
 def read_dhcp(min_time, max_time)
   named_parameter_query = "SELECT id, hostname, ip_address, mac_address, z
-                          FROM dhcp_test WHERE time >= %{1} and time < %{2}
+                          FROM dhcp_all WHERE time >= %{1} and time < %{2}
                           LIMIT 5"
   # res = []
   @influxdb.query named_parameter_query,
@@ -317,7 +317,7 @@ def read_nps(min_time, max_time)
                           \"Packet-Type\",
                           \"SAM-Account-Name\",
                           z
-                          FROM nps_test
+                          FROM nps_all
                           WHERE time >= %{1} AND time < %{2}
                                 AND \"Authentication-Type\"='11'"
   res = []
