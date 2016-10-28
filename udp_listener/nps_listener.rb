@@ -19,7 +19,12 @@ TIME_RANGE=3*60 #pushed the time range, in seconds
 @last_pushed_time=0
 
 def fix_mac(s)
-  s.upcase!
+  if(s.is_a? String)
+    s.upcase!
+    return s
+  else
+    return s
+  end
 end
 
 def fix_data( h )
@@ -34,8 +39,8 @@ def fix_data( h )
   h.delete("host")
   h.delete("port")
 
-  fix_mac(h["Calling-Station-Id"])
-  fix_mac(h["Called-Station-Id"])
+  h["Calling-Station-Id"] = fix_mac(h["Calling-Station-Id"])
+  h["Called-Station-Id"] = fix_mac(h["Called-Station-Id"])
 
   h.each do |k,v|
     if(v.is_a? Numeric)

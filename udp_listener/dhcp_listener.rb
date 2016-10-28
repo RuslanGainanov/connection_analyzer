@@ -19,9 +19,15 @@ TIME_RANGE=3*60 #pushed the time range, in seconds
 @last_pushed_time=0
 
 def fix_mac(s)
-  s.upcase!
-  if(!s.empty?)
-    s = "#{s[0,2]}-#{s[2,2]}-#{s[4,2]}-#{s[6,2]}-#{s[8,2]}-#{s[10,2]}"
+  if(s.is_a? String)
+    if(!s.empty?)
+      s.upcase!
+      return "#{s[0,2]}-#{s[2,2]}-#{s[4,2]}-#{s[6,2]}-#{s[8,2]}-#{s[10,2]}"
+    else
+      return s
+    end
+  else
+    return s
   end
 end
 
@@ -34,7 +40,7 @@ def fix_data( h )
   h.delete("type")
   h.delete("tags")
 
-  fix_mac(h["mac_address"])
+  h["mac_address"] = fix_mac(h["mac_address"])
 
   h.each do |k,v|
     if(v.is_a? Numeric)
