@@ -285,8 +285,7 @@ end
 
 def read_dhcp(min_time, max_time)
   named_parameter_query = "SELECT id, hostname, ip_address, mac_address, z
-                          FROM dhcp_all WHERE time >= %{1} and time < %{2}
-                          LIMIT 5"
+                          FROM dhcp_all WHERE time >= %{1} and time < %{2}"
   # res = []
   @influxdb.query named_parameter_query,
                   params: [min_time.to_i*1000000000, max_time.to_i*1000000000] do |name, tags, points|
@@ -334,10 +333,10 @@ end
 # puts "Write all points? #{@write_all}"
 puts "[#{Time.now.utc}]: [Start]"
 # @nps_data = read_nps(Time.now - 5*60, Time.now)
-@nps_data = read_nps(Time.now - 30, Time.now)
+@nps_data = read_nps(Time.now - 70, Time.now)
 puts "Readed #{@nps_data.length} nps points"
 # read_dhcp(Time.now - 5*60, Time.now)
-read_dhcp(Time.now - 20, Time.now - 10)
+read_dhcp(Time.now - 65, Time.now - 5)
 
 @write_all=true
 push_data()
