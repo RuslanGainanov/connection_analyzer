@@ -1,5 +1,5 @@
-chmod +x analyze.sh
-crontab -l > backup_cron_tasks
+chmod +x /var/udp_listener/analyzer/analyze.sh
+crontab -l > /var/udp_listener/analyzer/backup_cron_tasks
 crontab -r
-./analyze.sh
-crontab cron-file.txt
+/var/udp_listener/analyzer/analyze.sh
+crontab /var/udp_listener/analyzer/cron-file.txt
