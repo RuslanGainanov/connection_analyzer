@@ -14,8 +14,8 @@ class Events
   define :FINISH, 3 #strict end (строгий, полученный командой dhcp)
 end
 
-# INFLUX_HOST = "localhost"
-INFLUX_HOST = '10.8.0.1'
+INFLUX_HOST = "localhost"
+# INFLUX_HOST = '10.8.0.1'
 TIME_ZONE = 5
 TOLERANCE = 2 #The maximum duration of time that two incoming points can be apart and still be considered to be equal in time.
               #in seconds
@@ -58,7 +58,7 @@ end
 
 def push_data()
   # puts "push data"
-  if(@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE) || @write_all )
+  if(!@stored_data.empty? && (@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE) || @write_all) )
     puts "[#{Time.now.utc}]: [Push] Write #{@stored_data.length} point(s)"
     @influxdb.write_points(@stored_data)
     @stored_data.clear
@@ -109,148 +109,6 @@ def close_session(tagname, tagvalue, new_time_start, store_event=Events::LAX_FIN
   end
 end
 
-# def close_other_session_mac(mac, new_time_start)
-#   named_parameter_query = "SELECT last(z)
-#                           FROM connection_test
-#                           WHERE UserMac = %{1} AND (Event = '%{2}' OR Event = '%{3}')"
-#   # res = []
-#   last_time_finish=0
-#   last_time_start=0
-#   founded_last_finish=false
-#   res = @influxdb.query( named_parameter_query, params: [mac, Events::FINISH, Events::LAX_FINISH ] )
-#   if(!res.empty?)
-#     if(!res.first['values'].empty?)
-#       last_time_finish = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#       founded_last_finish=true
-#     end
-#   end
-#   res = nil
-#   if(founded_last_finish || last_time_finish != 0)
-#     named_parameter_query = "SELECT last(z)
-#                             FROM connection_test
-#                             WHERE UserMac = %{1} AND Event = '%{2}' AND time > %{3}s AND time < %{4}s"
-#     res = @influxdb.query( named_parameter_query, params: [mac, Events::START, last_time_finish, new_time_start] )
-#     if(!res.empty?)
-#       puts "[#{Time.now.utc}]: Was founded open session for mac '#{ip}'."
-#       if(!res.first['values'].empty?)
-#         last_time_start = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#         if(last_time_start!=0)
-#           named_parameter_query = "SELECT *
-#                                   FROM connection_test
-#                                   WHERE UserMac = %{1} AND Event = '%{2}' AND time >= %{3}s AND time <= %{4}s"
-#           @influxdb.query( named_parameter_query,
-#                            params: [mac, Events::START, last_time_start, last_time_start+1] ) do |name, tags, points|
-#
-#             if(!points.empty?)
-#               last_start_point = points.first
-#               last_start_point['time'] = new_time_start - 1 #теперь это конец
-#               store_point( Events::LAX_FINISH, last_start_point, new_time_start - last_time_start )
-#             end
-#             break
-#           end
-#         end
-#       end
-#     else
-#       puts "[#{Time.now.utc}]: All sessions was closed for mac '#{mac}'."
-#     end
-#   end
-# end
-
-# def close_other_session_ip(ip, new_time_start)
-#   named_parameter_query = "SELECT last(z)
-#                           FROM connection_test
-#                           WHERE Ip = %{1} AND (Event = '%{2}' OR Event = '%{3}')"
-#   # res = []
-#   last_time_finish=0
-#   last_time_start=0
-#   founded_last_finish=false
-#   res = @influxdb.query( named_parameter_query, params: [ip, Events::FINISH, Events::LAX_FINISH ] )
-#   if(!res.empty?)
-#     if(!res.first['values'].empty?)
-#       last_time_finish = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#       founded_last_finish=true
-#     end
-#   end
-#   res = nil
-#   if(founded_last_finish || last_time_finish != 0)
-#     named_parameter_query = "SELECT last(z)
-#                             FROM connection_test
-#                             WHERE Ip = %{1} AND Event = '%{2}' AND time > %{3}s AND time < %{4}s"
-#     res = @influxdb.query( named_parameter_query, params: [ip, Events::START, last_time_finish, new_time_start] )
-#     if(!res.empty?)
-#       puts "[#{Time.now.utc}]: Was founded open session for ip '#{ip}'."
-#       if(!res.first['values'].empty?)
-#         last_time_start = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#         if(last_time_start!=0)
-#           named_parameter_query = "SELECT *
-#                                   FROM connection_test
-#                                   WHERE Ip = %{1} AND Event = '%{2}' AND time >= %{3}s AND time <= %{4}s"
-#           @influxdb.query( named_parameter_query,
-#                            params: [ip, Events::START, last_time_start, last_time_start+1] ) do |name, tags, points|
-#
-#             if(!points.empty?)
-#               last_start_point = points.first
-#               last_start_point['time'] = new_time_start - 1 #теперь это конец
-#               store_point( Events::LAX_FINISH, last_start_point, new_time_start - last_time_start )
-#             end
-#             break
-#           end
-#         end
-#       end
-#     else
-#       puts "[#{Time.now.utc}]: All sessions was closed for ip '#{ip}'."
-#     end
-#   end
-# end
-
-# def close_user_session(user_name, new_time_start, store_event=Events::LAX_FINISH)
-#   # puts "#{user_name} #{new_time_start} #{store_event}"
-#   named_parameter_query = "SELECT last(z)
-#                           FROM connection_test
-#                           WHERE UserName = %{1} AND (Event = '%{2}' OR Event = '%{3}')"
-#   # res = []
-#   last_time_finish=0
-#   last_time_start=0
-#   # founded_last_finish=false
-#   res = @influxdb.query( named_parameter_query, params: [user_name, Events::FINISH, Events::LAX_FINISH ] )
-#   if(!res.empty?)
-#     if(!res.first['values'].empty?)
-#       last_time_finish = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#       # founded_last_finish=true
-#     end
-#   end
-#   res = nil
-#   # if(founded_last_finish || last_time_finish != 0)
-#     named_parameter_query = "SELECT last(z)
-#                             FROM connection_test
-#                             WHERE UserName = %{1} AND Event = '%{2}' AND time > %{3}s AND time < %{4}s"
-#     res = @influxdb.query( named_parameter_query, params: [user_name, Events::START, last_time_finish, new_time_start] )
-#     if(!res.empty?)
-#       puts "[#{Time.now.utc}]: Was founded open session for user '#{user_name}'."
-#       if(!res.first['values'].empty?)
-#         last_time_start = DateTime.iso8601(res.first['values'].first['time']).to_time.to_i
-#         if(last_time_start!=0)
-#           named_parameter_query = "SELECT *
-#                                   FROM connection_test
-#                                   WHERE UserName = %{1} AND Event = '%{2}' AND time >= %{3}s AND time <= %{4}s"
-#           @influxdb.query( named_parameter_query,
-#                            params: [user_name, Events::START, last_time_start, last_time_start+1] ) do |name, tags, points|
-#
-#             if(!points.empty?)
-#               last_start_point = points.first
-#               last_start_point['time'] = new_time_start - 1 #теперь это конец
-#               store_point( store_event, last_start_point, new_time_start - last_time_start )
-#             end
-#             break
-#           end
-#         end
-#       end
-#     else
-#       puts "[#{Time.now.utc}]: All sessions was closed for user '#{user_name}'"
-#     end
-#   # end
-# end
-
 def find_connection(where_condition)
   named_parameter_query = "SELECT *
                           FROM connection_test
@@ -273,7 +131,11 @@ def find_connection_last(where_condition)
 end
 
 def fix_username(n)
-  return n.split('\\').join("\\\\")
+  if(n.is_a? String)
+    return n.split('\\').join("\\\\")
+  else
+    return n
+  end
 end
 
 def store_point(event, point, field=0)
@@ -317,7 +179,7 @@ def store_point(event, point, field=0)
     }
     push_data()
   else
-    puts "[#{Time.now.utc}]: [Strore=#{event}] Unknown the event for storing"
+    # puts "[#{Time.now.utc}]: [Strore=#{event}] Unknown the event for storing"
   end
 end
 
@@ -330,7 +192,7 @@ def dhcp_f_assign(dhcp_point)
   # puts "last_time_finish #{last_time_finish}"
   if(last_time_finish <= last_time_start)
     #session wasn't closed
-    puts "Session wasn't closed for mac #{dhcp_point['mac_address']}"
+    puts "[#{Time.now.utc}]: [Assign] Session wasn't closed for mac #{dhcp_point['mac_address']}"
     res = find_connection("time >= #{last_time_start-1}s AND time <= #{last_time_start+1}s AND \"UserMac\"='#{dhcp_point['mac_address']}' AND \"Event\"='#{Events::START}'")
     if(!res.empty?)
       if(!res.first['values'].empty?)
@@ -362,7 +224,7 @@ def dhcp_f_assign(dhcp_point)
         connection_point = res.first['values'].first
         # puts "Connection mac: #{connection_point}"
         if(connection_point['UserMac'] != dhcp_point['mac_address'])
-          puts "Session wasn't closed for ip #{dhcp_point['ip_address']}"
+          puts "[#{Time.now.utc}]: [Assign] Session wasn't closed for ip #{dhcp_point['ip_address']}"
           ts = DateTime.iso8601(dhcp_point['time']).to_time.to_i
           close_session("Ip", dhcp_point['ip_address'], ts)
         end
@@ -436,10 +298,10 @@ def read_dhcp(min_time, max_time)
         dhcp_f_expired(pt)
       when '10' #assign
         dhcp_f_assign(pt)
-      when '12' #assign
+      when '12' #release
         dhcp_f_release(pt)
       else
-        puts 'Unknow ID'
+        # puts 'Unknow ID'
       end
       # res << pt
     end
@@ -457,8 +319,7 @@ def read_nps(min_time, max_time)
                           z
                           FROM nps_test
                           WHERE time >= %{1} AND time < %{2}
-                                AND \"Authentication-Type\"='11'
-                          LIMIT 5"
+                                AND \"Authentication-Type\"='11'"
   res = []
   @influxdb.query named_parameter_query,
                   params: [min_time.to_i*1000000000, max_time.to_i*1000000000] do |name, tags, points|
@@ -470,13 +331,17 @@ def read_nps(min_time, max_time)
   return res
 end
 
-puts "Write all points? #{@write_all}"
-@nps_data = read_nps(Time.now - 5*60, Time.now)
+# puts "Write all points? #{@write_all}"
+puts "[#{Time.now.utc}]: [Start]"
+# @nps_data = read_nps(Time.now - 5*60, Time.now)
+@nps_data = read_nps(Time.now - 30, Time.now)
 puts "Readed #{@nps_data.length} nps points"
-read_dhcp(Time.now - 5*60, Time.now)
+# read_dhcp(Time.now - 5*60, Time.now)
+read_dhcp(Time.now - 20, Time.now - 10)
 
 @write_all=true
 push_data()
+puts "[#{Time.now.utc}]: [End]"
 
 
 ###### TEMP ##########
