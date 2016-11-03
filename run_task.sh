@@ -1,3 +1,4 @@
+mkdir /var/log/connection_analyzer
 chmod +x /var/connection_analyzer/analyze.sh
 crontab -l > /var/connection_analyzer/backup_cron_tasks
 crontab -r
