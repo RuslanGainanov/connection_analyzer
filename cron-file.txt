@@ -1,1 +1,1 @@
-*/1 * * * * /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10; /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10; /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10; /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10; /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10; /var/udp_listener/analyzer/analyze.sh; /bin/sleep 10;
+*/1 * * * * /var/connection_analyzer/analyze.sh
