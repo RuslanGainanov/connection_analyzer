@@ -39,7 +39,7 @@ def find_nps_request(value)
   res = []
   # puts @nps_data.class
   @nps_data.each do |point|
-    if(point['Calling-Station-Id']==value && point['Packet-Type']=='1')
+    if(point['Calling-Station-Id']==value && point['z_PacketType']==1)
       res << point
     end
   end
@@ -50,10 +50,10 @@ def find_nps_accept(class_ip, class_time, class_id, req_time)
   # puts '## find_nps_accept ##'
   # res = []
   @nps_data.each do |point|
-    if(point['Class-Ip']==class_ip &&
-      point['Class-Time']==class_time &&
-      point['Class-Id']==class_id &&
-      point['Packet-Type']=='2' &&
+    if(point['z_ClassIp']==class_ip &&
+      point['z_ClassTime']==class_time &&
+      point['z_ClassId']==class_id &&
+      point['z_PacketType']==2 &&
       DateTime.iso8601(point['time']).to_time >= DateTime.iso8601(req_time).to_time)
       return point
     end
@@ -197,7 +197,7 @@ def dhcp_f_assign(dhcp_point)
   last_time_finish_ip = find_connection_last("\"Ip\"='#{dhcp_point['ip_address']}' AND (\"Event\"='#{Events::FINISH}' OR \"Event\"='#{Events::LAX_FINISH}')")
   # puts "last_time_start  #{last_time_start}"
   # puts "last_time_finish #{last_time_finish}"
-  if(last_time_finish <= last_time_start)
+  if(last_time_finish < last_time_start)
     #session wasn't closed
     puts "[#{Time.now.utc}]: [Assign] Session wasn't closed for mac #{dhcp_point['mac_address']}"
     res = find_connection("time >= #{last_time_start-1}s AND time <= #{last_time_start+1}s AND \"UserMac\"='#{dhcp_point['mac_address']}' AND \"Event\"='#{Events::START}'")
@@ -259,7 +259,7 @@ def dhcp_f_renew(dhcp_point)
     i=0
     n_accept=0
     nps_r.each do |nps_point|
-      nps_a = find_nps_accept(nps_point['Class-Ip'], nps_point['Class-Time'], nps_point['Class-Id'], nps_point['time'])
+      nps_a = find_nps_accept(nps_point['z_ClassIp'], nps_point['z_ClassTime'], nps_point['z_ClassId'], nps_point['time'])
       # puts "#{i}: [NPS] [#{!nps_a.empty?}] #{nps_point}"
       # puts "#{i}:              #{nps_a}"
       if( !nps_a.empty? )
@@ -316,17 +316,17 @@ def read_dhcp(min_time, max_time)
 end
 
 def read_nps(min_time, max_time)
-  named_parameter_query = "SELECT \"Authentication-Type\",
+  named_parameter_query = "SELECT \"z_AuthenticationType\",
                           \"Calling-Station-Id\",
-                          \"Class-Ip\",
-                          \"Class-Time\",
-                          \"Class-Id\",
+                          \"z_ClassIp\",
+                          \"z_ClassTime\",
+                          \"z_ClassId\",
                           \"Client-Friendly-Name\",
-                          \"Packet-Type\",
+                          \"z_PacketType\",
                           \"SAM-Account-Name\"
                           FROM nps_all
                           WHERE time >= %{1} AND time < %{2}
-                                AND \"Authentication-Type\"=11"
+                                AND \"z_AuthenticationType\"=11"
   res = []
   @influxdb.query named_parameter_query,
                   params: [min_time.to_i*1000000000, max_time.to_i*1000000000] do |name, tags, points|
@@ -334,7 +334,7 @@ def read_nps(min_time, max_time)
       res << pt
     end
   end
-  # puts (!res.empty?)? "#{res[0]['Authentication-Type']}" : "empty"
+  # puts (!res.empty?)? "#{res[0]['z_AuthenticationType']}" : "empty"
   return res
 end
 
