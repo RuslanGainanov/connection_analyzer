@@ -14,7 +14,7 @@ TIME_RANGE=3*60 #pushed the time range, in seconds
 
 @stored_data=[]
 @influxdb = InfluxDB::Client.new host: INFLUX_HOST,
-  database: "telegraf",
+  database: "itgrp_listen",
   time_precision: 's'
 @last_pushed_time=0
 
@@ -39,6 +39,21 @@ def fix_data( h )
   h.delete("SourceModuleType")
   h.delete("type")
   h.delete("tags")
+  h.delete("correlation_id")
+  h.delete("dns_reg_error")
+  h.delete("port")
+  h.delete("qresult")
+  h.delete("transaction_id")
+  h.delete("user_class_ascii")
+  h.delete("user_class_hex")
+  h.delete("vendor_class_ascii")
+  h.delete("vendor_class_hex")
+  # h.delete("host")
+  # h.delete("id")
+  h.delete("description")
+  # h.delete("ip_address")
+  # h.delete("hostname")
+  # h.delete("mac_address")
 
   h["mac_address"] = fix_mac(h["mac_address"])
 
