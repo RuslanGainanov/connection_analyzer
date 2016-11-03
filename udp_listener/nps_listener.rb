@@ -38,7 +38,7 @@ def fix_class(s)
       ip = arr.at(2)
       id = arr.at(5).to_i
       # time = 04/20/2016 20:20:23
-      time = DateTime.strptime(arr.at(3)+""+arr.at(4), '%m/%d/%Y %H:%M:%S').to_time.to_i
+      time = DateTime.strptime(arr.at(3)+" "+arr.at(4), '%m/%d/%Y %H:%M:%S').to_time.to_i
     end
   end
   return ip, time, id
@@ -73,7 +73,7 @@ def fix_data( h )
 end
 
 def push_data()
-  if(!@stored_data.empty? && (@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE) )
+  if(!@stored_data.empty? && (@stored_data.length >= COUNT_STORED_ELEMENTS || Time.now.to_i - @last_pushed_time > TIME_RANGE))
     puts "[#{Time.now.utc}]: [Push] Write #{@stored_data.length} point(s)"
     @influxdb.write_points(@stored_data)
     @stored_data.clear
