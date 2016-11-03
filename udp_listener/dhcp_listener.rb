@@ -69,12 +69,11 @@ def fix_data( h )
 end
 
 def push_data()
-  if(@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE))
-    if(!@stored_data.empty?)
-      @influxdb.write_points(@stored_data)
-      @stored_data.clear
-      @last_pushed_time=Time.now.to_i
-    end
+  if(!@stored_data.empty? && (@stored_data.length >= COUNT_STORED_ELEMENTS || (Time.now.to_i - @last_pushed_time > TIME_RANGE) )
+    puts "[#{Time.now.utc}]: [Push] Write #{@stored_data.length} point(s)"
+    @influxdb.write_points(@stored_data)
+    @stored_data.clear
+    @last_pushed_time=Time.now.to_i
   end
 end
 
@@ -101,7 +100,7 @@ end
 
 server = UDPSocket.new
 server.bind(LISTEN_ADDR, LISTEN_PORT)
-puts "start"
+puts "[#{Time.now.utc}]: [Start] Listener has started"
 loop do
   text, sender = server.recvfrom(65536)
   # text, sender = server.recvfrom_nonblock(65536)
