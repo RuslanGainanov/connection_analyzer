@@ -38,7 +38,13 @@ TIME_WINDOW=1*60
 def find_nps_request(value)
   res = []
   # puts @nps_data.class
+  puts "[#{Time.now.utc}]: [Find NPS point] Find with mac: #{value}"
+  # a=false
   @nps_data.each do |point|
+    # if(a==false)
+    #   puts "[#{Time.now.utc}]: [Find NPS point] z_PacketType.class: #{point['z_PacketType'].class}"
+    #   a=true
+    # end
     if(point['Calling-Station-Id']==value && point['z_PacketType']==1)
       res << point
     end
@@ -50,7 +56,7 @@ def find_nps_accept(class_ip, class_time, class_id, req_time)
   # puts '## find_nps_accept ##'
   # res = []
   @nps_data.each do |point|
-    if(point['z_ClassIp']==class_ip &&
+    if(point['Class-Ip']==class_ip &&
       point['z_ClassTime']==class_time &&
       point['z_ClassId']==class_id &&
       point['z_PacketType']==2 &&
@@ -73,6 +79,7 @@ def push_data()
   end
 end
 
+#time in seconds
 def close_session(tagname, tagvalue, new_time_start, store_event=Events::FINISH)
   puts "[#{Time.now.utc}]: [Close] \"#{tagname}\" = '#{tagvalue}', new_time_start=#{new_time_start} Event=#{store_event}"
   named_parameter_query = "SELECT last(z)
@@ -241,16 +248,18 @@ def dhcp_f_assign(dhcp_point)
 end
 
 def dhcp_f_release(dhcp_point)
+  ts = DateTime.iso8601(dhcp_point['time']).to_time.to_i
   close_session("UserMac", dhcp_point['mac_address'], ts, Events::FINISH)
   close_session("Ip", dhcp_point['ip_address'], ts, Events::FINISH)
 end
 
 def dhcp_f_expired(dhcp_point)
+  ts = DateTime.iso8601(dhcp_point['time']).to_time.to_i
   close_session("Ip", dhcp_point['ip_address'], ts, Events::FINISH)
 end
 
 def dhcp_f_renew(dhcp_point)
-  puts "[#{Time.now.utc}]: [Renew] A renew packet was received"
+  puts "[#{Time.now.utc}]: [Renew] A renew packet was received include #{dhcp_point['mac_address']}"
   # puts '## dhcp_f_renew ##'
   # pp dhcp_point
   nps_r = find_nps_request(dhcp_point['mac_address'])
@@ -259,8 +268,8 @@ def dhcp_f_renew(dhcp_point)
     i=0
     n_accept=0
     nps_r.each do |nps_point|
-      nps_a = find_nps_accept(nps_point['z_ClassIp'], nps_point['z_ClassTime'], nps_point['z_ClassId'], nps_point['time'])
-      # puts "#{i}: [NPS] [#{!nps_a.empty?}] #{nps_point}"
+      nps_a = find_nps_accept(nps_point['Class-Ip'], nps_point['z_ClassTime'], nps_point['z_ClassId'], nps_point['time'])
+      puts "[#{Time.now.utc}]: [Renew] [After find NPS] #{i}: #{nps_point}"
       # puts "#{i}:              #{nps_a}"
       if( !nps_a.empty? )
         accept_time = nps_a['time']
@@ -293,7 +302,7 @@ end
 def read_dhcp(min_time, max_time)
   named_parameter_query = "SELECT id, hostname, ip_address, mac_address, z
                           FROM dhcp_all WHERE time >= %{1} and time < %{2}"
-  # res = []
+  res = []
   @influxdb.query named_parameter_query,
                   params: [min_time.to_i*1000000000, max_time.to_i*1000000000] do |name, tags, points|
     points.each do |pt|
@@ -309,16 +318,16 @@ def read_dhcp(min_time, max_time)
       else
         # puts 'Unknow ID'
       end
-      # res << pt
+      res << pt
     end
   end
-  # puts res[0]['id']
+  puts "[#{Time.now.utc}]: [Read DHCP] Readed #{res.length} nps points since #{min_time} to #{max_time}"
 end
 
 def read_nps(min_time, max_time)
   named_parameter_query = "SELECT \"z_AuthenticationType\",
                           \"Calling-Station-Id\",
-                          \"z_ClassIp\",
+                          \"Class-Ip\",
                           \"z_ClassTime\",
                           \"z_ClassId\",
                           \"Client-Friendly-Name\",
@@ -335,6 +344,7 @@ def read_nps(min_time, max_time)
     end
   end
   # puts (!res.empty?)? "#{res[0]['z_AuthenticationType']}" : "empty"
+  puts "[#{Time.now.utc}]: [Read NPS] Readed #{res.length} nps points since #{min_time} to #{max_time}"
   return res
 end
 
@@ -342,7 +352,6 @@ end
 puts "[#{Time.now.utc}]: [Start]"
 # @nps_data = read_nps(Time.now - 5*60, Time.now)
 @nps_data = read_nps(Time.now - (TIME_WINDOW + 10) - SHIFT_TIME, Time.now - SHIFT_TIME)
-puts "Readed #{@nps_data.length} nps points"
 # read_dhcp(Time.now - 5*60, Time.now)
 read_dhcp(Time.now - (TIME_WINDOW + 5) - SHIFT_TIME, Time.now - 5 - SHIFT_TIME)
 
