@@ -20,8 +20,12 @@ TIME_RANGE=3*60 #pushed the time range, in seconds
 
 def fix_mac(s)
   if(s.is_a? String)
-    s.upcase!
-    return s
+    if(!s.empty?)
+      s.upcase!
+      return "#{s[0,2]}-#{s[2,2]}-#{s[4,2]}-#{s[6,2]}-#{s[8,2]}-#{s[10,2]}"
+    else
+      return s
+    end
   else
     return s
   end
