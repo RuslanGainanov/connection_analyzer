@@ -22,7 +22,7 @@ TIME_RANGE=1*60 #pushed the time range, in seconds
 @logger = Lumberjack::Logger.new("/var/log/udp_listener/syslog.log", :max_size => 100*1024*1014, :level => :debug)
 # @logger = Lumberjack::Logger.new("C:/tmp/syslog.log", :max_size => 100, :level => :debug)
 @grok = Grok.new
-@grok.add_patterns_from_file("./patterns/pure-ruby/base")
+@grok.add_patterns_from_file("/var/udp_listener/patterns/pure-ruby/base")
 # @grok.add_patterns_from_file("C:/Ruby23/lib/ruby/gems/2.3.0/gems/jls-grok-0.11.4/patterns/pure-ruby/base")
 @grok.compile("<%{NUMBER}>%{SYSLOGTIMESTAMP:ts} %{IP:ip} %{WORD:level}: %{GREEDYDATA:message}")
 
