@@ -4,6 +4,7 @@ require 'json'
 require 'influxdb'
 require 'date'
 require 'pp'
+require 'lumberjack'
 
 INFLUX_HOST = "localhost"
 LISTEN_PORT = 5241
@@ -17,6 +18,12 @@ TIME_RANGE=3*60 #pushed the time range, in seconds
   database: "itgrp_listen",
   time_precision: 's'
 @last_pushed_time=0
+
+# @logger = Lumberjack::Logger.new("E:/!Code/Ruby/udp_listener/tmp/logs/nps.log", :max_size => 1*1024, :level => :debug)
+@logger = Lumberjack::Logger.new("/var/log/udp_listener/nps.log", :max_size => 100*1024*1014, :level => :debug)
+# logger.info("Begin request")
+# logger.debug("params")  # Message not written unless the level is set to DEBUG
+# logger.info("End request")
 
 def fix_mac(s)
   if(s.is_a? String)
@@ -78,7 +85,8 @@ end
 
 def push_data()
   if(!@stored_data.empty? && (@stored_data.length >= COUNT_STORED_ELEMENTS || Time.now.to_i - @last_pushed_time > TIME_RANGE))
-    puts "[#{Time.now.utc}]: [Push] Write #{@stored_data.length} point(s)"
+    # puts "[#{Time.now.utc}]: [Push] Write #{@stored_data.length} point(s)"
+    @logger.info("[Push] Write #{@stored_data.length} point(s)")
     @influxdb.write_points(@stored_data)
     @stored_data.clear
     @last_pushed_time=Time.now.to_i
@@ -134,7 +142,8 @@ end
 server = UDPSocket.new
 server.bind(LISTEN_ADDR, LISTEN_PORT)
 
-puts "[#{Time.now.utc}]: [Start] Listener has started"
+# puts "[#{Time.now.utc}]: [Start] Listener has started"
+@logger.info("[Start] Listener has started")
 loop do
   text, sender = server.recvfrom(65536)
   # text, sender = server.recvfrom_nonblock(65536)
