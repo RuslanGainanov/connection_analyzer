@@ -11,7 +11,7 @@ LISTEN_PORT = 5242
 LISTEN_ADDR = "0.0.0.0"
 TIME_ZONE = 5
 COUNT_STORED_ELEMENTS = 100
-TIME_RANGE=3*60 #pushed the time range, in seconds
+TIME_RANGE=1*60 #pushed the time range, in seconds
 
 @stored_data=[]
 @influxdb = InfluxDB::Client.new host: INFLUX_HOST,
