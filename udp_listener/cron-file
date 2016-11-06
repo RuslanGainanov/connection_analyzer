@@ -1,1 +1,1 @@
-0 0 * * * /var/udp_listner/backup_db.sh >> /var/log/udp_listener/backup.log 2>&1
+0 0 * * * /var/udp_listener/backup_db.sh >> /var/log/udp_listener/backup.log 2>&1
