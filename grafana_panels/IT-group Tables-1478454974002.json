@@ -1,0 +1,558 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_IT-GRP",
+      "label": "IT-grp",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "3.1.1"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    }
+  ],
+  "id": null,
+  "title": "IT-group Tables",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "columns": [],
+          "datasource": "${DS_IT-GRP}",
+          "editable": true,
+          "error": false,
+          "fontSize": "100%",
+          "id": 1,
+          "isNew": true,
+          "links": [],
+          "pageSize": 25,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "span": 12,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(20, 95, 17, 0.97)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(113, 54, 54, 0.9)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "S/F",
+              "thresholds": [
+                "0.1",
+                "1.0"
+              ],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "UserName",
+              "sanitize": true,
+              "thresholds": [
+                ""
+              ],
+              "type": "string",
+              "unit": "none"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "HostName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "NasName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "connections",
+              "policy": "default",
+              "query": "SELECT UserName, UserMac, z_IP AS IP, HostName, NasName,  z_SF AS \"S/F\" FROM \"connections\" WHERE $timeFilter  AND UserName =~ /$UserName$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "*"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "UserName",
+                  "operator": "=~",
+                  "value": "/^$UserName$/"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Поиск сессий по пользователю",
+          "transform": "timeseries_to_columns",
+          "type": "table"
+        }
+      ],
+      "title": "Table over user"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "columns": [],
+          "datasource": "${DS_IT-GRP}",
+          "editable": true,
+          "error": false,
+          "fontSize": "100%",
+          "id": 2,
+          "isNew": true,
+          "links": [],
+          "pageSize": 25,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "span": 12,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(20, 95, 17, 0.97)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(113, 54, 54, 0.9)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "S/F",
+              "thresholds": [
+                "0.1",
+                "1.0"
+              ],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "UserName",
+              "sanitize": true,
+              "thresholds": [
+                ""
+              ],
+              "type": "string",
+              "unit": "none"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "HostName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "NasName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "connections",
+              "policy": "default",
+              "query": "SELECT z_IP AS \"IP\", UserName, UserMac, HostName, NasName,  z_SF AS \"S/F\" FROM \"connections\" WHERE $timeFilter  AND Ip =~ /$Ip$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "*"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "UserName",
+                  "operator": "=~",
+                  "value": "/^$UserName$/"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Поиск сессий по IP-адресу",
+          "transform": "timeseries_to_columns",
+          "type": "table"
+        }
+      ],
+      "title": "Table over ip"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "columns": [],
+          "datasource": "${DS_IT-GRP}",
+          "editable": true,
+          "error": false,
+          "fontSize": "100%",
+          "id": 3,
+          "isNew": true,
+          "links": [],
+          "pageSize": 25,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "span": 12,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(20, 95, 17, 0.97)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(113, 54, 54, 0.9)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "S/F",
+              "thresholds": [
+                "0.1",
+                "1.0"
+              ],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "UserName",
+              "sanitize": true,
+              "thresholds": [
+                ""
+              ],
+              "type": "string",
+              "unit": "none"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "HostName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "NasName",
+              "sanitize": true,
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "connections",
+              "policy": "default",
+              "query": "SELECT HostName, UserName, UserMac, z_IP AS \"IP\", NasName,  z_SF AS \"S/F\" FROM \"connections\" WHERE $timeFilter  AND HostName =~ /$HostName$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "*"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "UserName",
+                  "operator": "=~",
+                  "value": "/^$UserName$/"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Поиск сессий по имени компьютера",
+          "transform": "timeseries_to_columns",
+          "type": "table"
+        }
+      ],
+      "title": "Table over host"
+    }
+  ],
+  "time": {
+    "from": "2016-10-23T19:00:00.000Z",
+    "to": "2016-10-30T18:59:59.999Z"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": "${DS_IT-GRP}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Пользователь",
+        "multi": false,
+        "name": "UserName",
+        "options": [],
+        "query": "SHOW TAG VALUES WITH KEY = UserName",
+        "refresh": 1,
+        "regex": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "${DS_IT-GRP}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "IP-адрес",
+        "multi": false,
+        "name": "Ip",
+        "options": [],
+        "query": "SHOW TAG VALUES WITH KEY = Ip",
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": "${DS_IT-GRP}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Имя компьютера",
+        "multi": false,
+        "name": "HostName",
+        "options": [],
+        "query": "SHOW TAG VALUES WITH KEY = HostName",
+        "refresh": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "schemaVersion": 12,
+  "version": 1,
+  "links": [],
+  "gnetId": null
+}
